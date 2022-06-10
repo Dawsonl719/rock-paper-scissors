@@ -3,12 +3,10 @@ function computerPlay(){
   return computerChoices[Math.floor(Math.random() * computerChoices.length)];
 }
 
-
 let playerScore = 0;
 let computerScore = 0;
 
-function playRound(round){
-  let playerSelection = prompt('Rock, Paper, or Scissors?');
+function playRound(playerSelection){
   let computerSelection = computerPlay();
   let result = '';
 
@@ -16,32 +14,52 @@ function playRound(round){
      (playerSelection == 'Paper' && computerSelection == 'Rock') ||
      (playerSelection == 'Scissors' && computerSelection == 'Paper')) {
        playerScore += 1;
-       result = ('You win! ' + playerSelection + ' beats ' + computerSelection);
+       result = ('You win! ' + playerSelection + ' beats ' + computerSelection + '. Current score = ' + playerScore + " vs "+ computerScore);
+      if (playerScore == 5) {
+        result += '<br></br>You win the game!';
+        disableButtons();
+        document.body.appendChild(replay);
+      }
      }
   else if (playerSelection == computerSelection) {
     result = ('Tie!');
   }
   else {
     computerScore += 1;
-    result = ('You lose! ' + computerSelection + ' beats ' + playerSelection);
+    result = ('You lose! ' + computerSelection + ' beats ' + playerSelection + '. Current score = ' + playerScore + " vs "+ computerScore);
+        if (computerScore == 5) {
+          result += '<br></br>You lose the game!';
+          disableButtons();
+          document.body.appendChild(replay);
+        }    
+  }
+  document.getElementById('result').innerHTML = result;
+  return;
   }
 
-  console.log(result);
+const buttons = document.querySelectorAll('input');
+buttons.forEach(button =>{
+  button.addEventListener('click', function(){
+    playRound(button.value)
+  })
+})
+
+function disableButtons() {
+  buttons.forEach(elem => {
+    elem.disabled = true
+  })
 }
 
-function game(){
-  for (let i = 0; i < 5; i++){
-    playRound(i);
-  }
-  if (playerScore > computerScore) {
-    console.log('You win the game! Final Score =', playerScore, ' vs ', computerScore);
-  }
-  else if (playerScore < computerScore) {
-    console.log('You lose the game! Final Score =', playerScore, ' vs ', computerScore);
-  }
-  else {
-    console.log('Tie! Final Score =', playerScore, ' vs ', computerScore);
-  }
+function enableButtons(){
+  buttons.forEach(elem => {
+    elem.disabled = false
+  })
 }
 
-window.onload = game();
+const refresh = () => {
+  location.reload();
+}
+
+let replay = document.createElement('button');
+replay.innerHTML = "Replay?";
+replay.addEventListener('click', refresh)
